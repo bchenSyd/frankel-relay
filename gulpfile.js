@@ -2,7 +2,7 @@ var path = require('path');
 var gulp = require('gulp');
 var changed = require('gulp-changed');
 
-var destinationFolders = ['../frankel-au', '../frankel-uk']
+var destinationFolders = ['../frankel-au', '../frankel-uk', 'E:\\learn-relay\\real-world']
 
 
 var RELAY_SRC = './lib/*';
