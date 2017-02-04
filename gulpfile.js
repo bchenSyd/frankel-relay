@@ -2,12 +2,14 @@ var path = require('path');
 var gulp = require('gulp');
 var changed = require('gulp-changed');
 
-var destinationFolders = ['../frankel-au', '../frankel-uk', 'E:\\learn-relay\\real-world']
 
-
+var destinationFolders = require('./targets')
 var RELAY_SRC = './lib/*';
-var RELAY_DEST = destinationFolders.map(dest =>
-    path.resolve(dest, 'node_modules/react-relay/lib'));
+var RELAY_DEST = destinationFolders.map(dest => {
+    var dest = path.resolve(dest, 'node_modules/react-relay/lib')
+    console.log(`auto sync to ${dest}`)
+    return dest;}
+);
 
 // dev task
 gulp.task('default', ['relay-copy-source'], function () {
