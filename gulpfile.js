@@ -4,9 +4,9 @@ var changed = require('gulp-changed');
 
 
 var destinationFolders = require('./targets')
-var RELAY_SRC = './lib/*';
+var RELAY_SRC = './*.js';
 var RELAY_DEST = destinationFolders.map(dest => {
-    var dest = path.resolve(dest, 'node_modules/react-relay/lib')
+    var dest = path.resolve(dest, 'node_modules/react-relay/')
     console.log(`auto sync to ${dest}`)
     return dest;}
 );
