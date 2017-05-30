@@ -6,6 +6,7 @@ var changed = require('gulp-changed');
 var destinationFolders = require('./targets')
 var REACT_RELAY_SRC = './react-relay/**/*.js';
 var RELAY_RUNTIME_SRC = './relay-runtime/**/*.js';
+var RELAY_COMPILER_SRC = './relay-compiler/**/*.js';
 var RELAY_DEST = destinationFolders.map(dest => {
     var dest = path.resolve(dest, 'node_modules/');
     console.log(`auto sync to ${dest}/react-relay and  ${dest}/relay-runtime`);
@@ -13,13 +14,17 @@ var RELAY_DEST = destinationFolders.map(dest => {
 });
 
 // dev task
-gulp.task('default', ['relay runtime sync','relay sync'])
+gulp.task('default', ['relay runtime sync','relay compiler sync','relay sync'])
 gulp.task('relay runtime sync', ['relay-runtime-copy-source'], function () {
     gulp.watch(RELAY_RUNTIME_SRC, ['relay-runtime-copy-source']);
 });
 
 gulp.task('relay sync', ['react-relay-copy-source'], function () {
     gulp.watch(REACT_RELAY_SRC, ['react-relay-copy-source']);
+});
+
+gulp.task('relay compiler sync', ['relay-compiler-copy-source'], function () {
+    gulp.watch(RELAY_COMPILER_SRC, ['relay-compiler-copy-source']);
 });
 
 gulp.task('react-relay-copy-source', function () {
@@ -35,6 +40,14 @@ gulp.task('relay-runtime-copy-source', function () {
     RELAY_DEST.forEach(dest => {
         const runtime_dest = path.join(dest, 'relay-runtime');
         gulp.src(RELAY_RUNTIME_SRC)
+            .pipe(changed(runtime_dest, { hasChanged: changed.compareSha1Digest }))
+            .pipe(gulp.dest(runtime_dest));
+    })
+});
+gulp.task('relay-compiler-copy-source', function () {
+    RELAY_DEST.forEach(dest => {
+        const runtime_dest = path.join(dest, 'relay-compiler');
+        gulp.src(RELAY_COMPILER_SRC)
             .pipe(changed(runtime_dest, { hasChanged: changed.compareSha1Digest }))
             .pipe(gulp.dest(runtime_dest));
     })
