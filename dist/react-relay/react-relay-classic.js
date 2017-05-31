@@ -10516,8 +10516,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    };
 	  };
 
-	  RelayEnvironment.prototype.commitPayload = function commitPayload(operationSelector, payload) {
-	    var selector = operationSelector.root;
+	  RelayEnvironment.prototype.commitPayload = function commitPayload(selector, payload) {
 	    var fragment = __webpack_require__(2).Fragment.create(selector.node, __webpack_require__(12).get('$RelayEnvironment'), selector.variables);
 	    var path = __webpack_require__(9).getRootRecordPath();
 	    this._storeData.handleFragmentPayload(selector.dataID, fragment, path, payload, null);
@@ -16258,7 +16257,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	  // TODO #8783781: remove aggregate `fetchRelayQuery` profiler
 	  var firstResultProfiler = __webpack_require__(10).profile('fetchRelayQuery');
 	  currentQueue.forEach(function (query) {
-	    var profiler = __webpack_require__(10).profile('fetchRelayQuery.query', query.getQuery().getName());
+	    var profiler = __webpack_require__(10).profile('fetchRelayQuery.query');
 	    var onSettle = function onSettle() {
 	      profiler.stop();
 	      if (firstResultProfiler) {

@@ -1913,7 +1913,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      var relay = assertRelayContext(context.relay);
 	      var createFragmentSpecResolver = relay.environment.unstable_internal.createFragmentSpecResolver;
 
-	      _this._localVariables = _this._getFragmentVariables();
+	      _this._localVariables = null;
 	      _this._pendingRefetch = null;
 	      _this._references = [];
 	      _this._resolver = createFragmentSpecResolver(relay, fragments, props, _this._handleFragmentDataUpdate);
@@ -1947,7 +1947,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	      // - Pending fetches are for the previous records.
 	      if (this.context.relay.environment !== relay.environment || !__webpack_require__(12)(prevIDs, nextIDs)) {
 	        this._release();
-	        this._localVariables = this._getFragmentVariables();
+	        this._localVariables = null;
 	        this._resolver = createFragmentSpecResolver(relay, fragments, nextProps, this._handleFragmentDataUpdate);
 	        this.setState({ relayProp: this._buildRelayProp(relay) });
 	      } else if (!this._localVariables) {
@@ -1995,8 +1995,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	    Container.prototype._buildRelayProp = function _buildRelayProp(relay) {
 	      return {
 	        environment: relay.environment,
-	        refetch: this._refetch,
-	        variables: this._localVariables
+	        refetch: this._refetch
 	      };
 	    };
 

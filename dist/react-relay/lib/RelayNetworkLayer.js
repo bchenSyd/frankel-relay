@@ -151,7 +151,7 @@ function profileQueue(currentQueue) {
   // TODO #8783781: remove aggregate `fetchRelayQuery` profiler
   var firstResultProfiler = require('./RelayProfiler').profile('fetchRelayQuery');
   currentQueue.forEach(function (query) {
-    var profiler = require('./RelayProfiler').profile('fetchRelayQuery.query', query.getQuery().getName());
+    var profiler = require('./RelayProfiler').profile('fetchRelayQuery.query');
     var onSettle = function onSettle() {
       profiler.stop();
       if (firstResultProfiler) {

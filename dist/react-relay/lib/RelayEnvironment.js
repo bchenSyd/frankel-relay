@@ -65,8 +65,7 @@ var RelayEnvironment = function () {
     };
   };
 
-  RelayEnvironment.prototype.commitPayload = function commitPayload(operationSelector, payload) {
-    var selector = operationSelector.root;
+  RelayEnvironment.prototype.commitPayload = function commitPayload(selector, payload) {
     var fragment = require('./RelayQuery').Fragment.create(selector.node, require('./RelayMetaRoute').get('$RelayEnvironment'), selector.variables);
     var path = require('./RelayQueryPath').getRootRecordPath();
     this._storeData.handleFragmentPayload(selector.dataID, fragment, path, payload, null);
