@@ -77,6 +77,7 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
           _this._pendingRefetch = null;
           callback && callback();
           _this._resolver.setVariables(fragmentVariables);
+          console.log('refetch is completed and i have now queued a re-render with updated props for component. you render() has updated data after you see this')
           _this.setState({ data: _this._resolver.resolve() });
         };
         var onError = function onError(error) {
@@ -206,7 +207,8 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
     Container.prototype._buildRelayProp = function _buildRelayProp(relay) {
       return {
         environment: relay.environment,
-        refetch: this._refetch
+        refetch: this._refetch,
+        getVariables: this._getFragmentVariables.bind(this)
       };
     };
 
