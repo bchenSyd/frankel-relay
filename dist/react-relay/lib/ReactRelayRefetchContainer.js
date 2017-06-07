@@ -178,17 +178,19 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
       this._release();
     };
 
+    //const refetchContainerName = 'TodoList';
+    const refetchContainerName = 'SearchTaxInput';
     Container.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState, nextContext) {
       var name = componentName;
       // Short-circuit if any Relay-related data has changed
       if (nextContext.relay !== this.context.relay || nextState.data !== this.state.data || nextState.relayProp !== this.state.relayProp) {
-        if(componentName === 'TodoList'){
-          console.log(`          ___SCU=TRUE  TodoList-container : after refetch->setState->scu returns true   -> re-render...`)
+        if(componentName === refetchContainerName){
+          console.log(`          ___SCU=TRUE  ${refetchContainerName}-container : after refetch->setState->scu returns true   -> re-render...`)
         }
         return true;
       }
       if(componentName === 'TodoList'){
-        console.log(`          ___SCU=FALSE  TodoList-container : after refetch->setState->scu returns false   skip re-render...`)
+        console.log(`          ___SCU=FALSE  ${refetchContainerName}-container : after refetch->setState->scu returns false   skip re-render...`)
       }
       // Otherwise, for convenience short-circuit if all non-Relay props
       // are scalar and equal

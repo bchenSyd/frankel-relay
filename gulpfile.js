@@ -15,7 +15,10 @@ var RELAY_DEST = destinationFolders.map(dest => {
 });
 
 // dev task
-gulp.task('default', ['babel-plugin-relay','relay-runtime','relay-compiler','react-relay'])
+gulp.task('relay', ['react-relay']);
+gulp.task('default', ['babel-plugin-relay','relay-runtime','relay-compiler','react-relay']);
+
+
 gulp.task('relay-runtime', ['relay-runtime-copy-source'], function () {
     gulp.watch(RELAY_RUNTIME_SRC, ['relay-runtime-copy-source']);
 });
