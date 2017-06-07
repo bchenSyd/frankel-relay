@@ -72,7 +72,7 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
             // only call callback once per refetch
             return;
           }
-          // TODO t15106389: add helper utility for fetching more data
+          // TO-DO t15106389: add helper utility for fetching more data
           _this._pendingRefetch = null;
           callback && callback();
           _this._resolver.setVariables(fragmentVariables);
