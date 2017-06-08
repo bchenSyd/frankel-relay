@@ -8,6 +8,7 @@
  *
  * @providesModule ReactRelayRefetchContainer
  * 
+ * @format
  */
 
 'use strict';
@@ -72,12 +73,15 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
             // only call callback once per refetch
             return;
           }
-          // TO-DO t15106389: add helper utility for fetching more data
+          // TODO t15106389: add helper utility for fetching more data
           _this._pendingRefetch = null;
+          _this._relayContext = {
+            environment: _this.context.relay.environment,
+            variables: fragmentVariables
+          };
           callback && callback();
           _this._resolver.setVariables(fragmentVariables);
-          var data = _this._resolver.resolve();
-          _this.setState({ data: data });
+          _this.setState({ data: _this._resolver.resolve() });
         };
         var onError = function onError(error) {
           _this._pendingRefetch = null;
@@ -128,11 +132,13 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
       _this._pendingRefetch = null;
       _this._references = [];
       _this._resolver = createFragmentSpecResolver(relay, fragments, props, _this._handleFragmentDataUpdate);
-      
-      var name = componentName;
-      var data = _this._resolver.resolve();  //bchen
+      _this._relayContext = {
+        environment: _this.context.relay.environment,
+        variables: _this.context.relay.variables
+      };
+      var data = _this._resolver.resolve(); //bchen
       _this.state = {
-        data: data,
+        data: data, 
         relayProp: _this._buildRelayProp(relay)
       };
       return _this;
@@ -146,7 +152,6 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
 
 
     Container.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps, nextContext) {
-      var name = componentName;
       var context = require('fbjs/lib/nullthrows')(nextContext);
       var relay = assertRelayContext(context.relay);
       var _relay$environment$un = relay.environment.unstable_internal,
@@ -159,11 +164,16 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
       // If the environment has changed or props point to new records then
       // previously fetched data and any pending fetches no longer apply:
       // - Existing references are on the old environment.
+      // - Existing references are based on old variables.
       // - Pending fetches are for the previous records.
-      if (this.context.relay.environment !== relay.environment || !require('fbjs/lib/areEqual')(prevIDs, nextIDs)) {
+      if (this.context.relay.environment !== relay.environment || this.context.relay.variables !== relay.variables || !require('fbjs/lib/areEqual')(prevIDs, nextIDs)) {
         this._release();
         this._localVariables = null;
-        this._resolver = createFragmentSpecResolver(relay, fragments, nextProps, this._handleFragmentDataUpdate);
+        this._relayContext = {
+          environment: relay.environment,
+          variables: relay.variables
+        };
+        this._resolver = createFragmentSpecResolver(relay, containerName, fragments, nextProps, this._handleFragmentDataUpdate);
         this.setState({ relayProp: this._buildRelayProp(relay) });
       } else if (!this._localVariables) {
         this._resolver.setProps(nextProps);
@@ -178,19 +188,10 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
       this._release();
     };
 
-    //const refetchContainerName = 'TodoList';
-    const refetchContainerName = 'SearchTaxInput';
     Container.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState, nextContext) {
-      var name = componentName;
       // Short-circuit if any Relay-related data has changed
       if (nextContext.relay !== this.context.relay || nextState.data !== this.state.data || nextState.relayProp !== this.state.relayProp) {
-        if(componentName === refetchContainerName){
-          console.log(`          ___SCU=TRUE  ${refetchContainerName}-container : after refetch->setState->scu returns true   -> re-render...`)
-        }
         return true;
-      }
-      if(componentName === 'TodoList'){
-        console.log(`          ___SCU=FALSE  ${refetchContainerName}-container : after refetch->setState->scu returns false   skip re-render...`)
       }
       // Otherwise, for convenience short-circuit if all non-Relay props
       // are scalar and equal
@@ -234,8 +235,11 @@ function createContainerWithFragments(Component, fragments, taggedNode) {
       return getVariablesFromObject(this.context.relay.variables, fragments, this.props);
     };
 
+    Container.prototype.getChildContext = function getChildContext() {
+      return { relay: this._relayContext };
+    };
+
     Container.prototype.render = function render() {
-      console.log(`${componentName}-refetchContainer render`); //bchen
       if (ComponentClass) {
         return require('react').createElement(ComponentClass, (0, _extends3['default'])({}, this.props, this.state.data, {
           ref: 'component' // eslint-disable-line react/no-string-refs
@@ -272,9 +276,11 @@ function assertRelayContext(relay) {
  * instance of the container constructed/rendered.
  */
 function createContainer(Component, fragmentSpec, taggedNode) {
-  return require('./buildReactRelayContainer')(Component, fragmentSpec, function (ComponentClass, fragments) {
+  var Container = require('./buildReactRelayContainer')(Component, fragmentSpec, function (ComponentClass, fragments) {
     return createContainerWithFragments(ComponentClass, fragments, taggedNode);
   });
+  Container.childContextTypes = containerContextTypes;
+  return Container;
 }
 
 module.exports = { createContainer: createContainer, createContainerWithFragments: createContainerWithFragments };

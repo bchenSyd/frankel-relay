@@ -185,7 +185,8 @@ function createContainerWithFragments(Component, fragments, connectionConfig) {
       // previously fetched data and any pending fetches no longer apply:
       // - Existing references are on the old environment.
       // - Pending fetches are for the previous records.
-      if (this.context.relay.environment !== relay.environment || !require('fbjs/lib/areEqual')(prevIDs, nextIDs)) {
+      if (this.context.relay.environment !== relay.environment ||
+       this.context.relay.variables !== relay.variables|| !require('fbjs/lib/areEqual')(prevIDs, nextIDs)) {
         this._release();
         this._localVariables = null;
         this._resolver = createFragmentSpecResolver(relay, fragments, nextProps, this._handleFragmentDataUpdate);
